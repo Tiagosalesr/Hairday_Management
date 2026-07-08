@@ -3,4 +3,5 @@ export interface Agendamento {
     nome: string;
     data: string;
     horario: string;
+    periodo: string;
 }

@@ -1,5 +1,6 @@
 import type { Agendamento } from "../types/Agendamento";
-
+import React, { useState } from "react";
+import { TrashIcon } from "@phosphor-icons/react";
 
 interface ListaAgendamentosProps {
     agendamentos: Agendamento[];
@@ -9,41 +10,90 @@ interface ListaAgendamentosProps {
 interface PeriodoAgendamentosProps {
     titulo: string;
     agendamentos: Agendamento[];
+    excluirAgendamento: (idAgendamento: number) => void;
 }
 
-function PeriodoAgendamento({titulo, agendamentos}: PeriodoAgendamentosProps){
-    let periodo = ""
+function PeriodoAgendamento({titulo, agendamentos, excluirAgendamento}: PeriodoAgendamentosProps){
 
-    if(titulo.toLowerCase() === "manhã"){
-        periodo = "09h-12h"
-    } else if(titulo.toLowerCase() === "tarde") {
-        periodo = "13h-18h"
-    } else {
-        periodo = "19h-21h"
+    function handleExcluir(idAgendamento: number){
+        excluirAgendamento(idAgendamento)
     }
 
-    agendamentos.map
-        return (
-            <div>
-                    <div>
-                        <p>{titulo}</p>
-                        <p>{periodo}</p>                
-                    </div>
-                    <div>
-                        <p></p>
-                    </div>
-            </div>
-        )
-}
-
-function ListaAgendamentos({agendamentos, excluirAgendamento}: ListaAgendamentosProps){
-    function handleExcluir(){
-        //excluirAgendamento()
+    let intervalo = ""
+    if(titulo.toLowerCase() === "manhã"){
+        intervalo = "09h-12h"
+    } else if(titulo.toLowerCase() === "tarde") {
+        intervalo = "13h-18h"
+    } else {
+        intervalo = "19h-21h"
     }
 
     return (
-
+            <div className="border-2 rounded-lg my-5 border-base-5 flex flex-col">
+                <div className="flex justify-between items-center gap-4 px-2 py-2">
+                    <p>{titulo}</p>
+                    <p>{intervalo}</p>
+                </div>
+                <hr className="border-base-5 my-1" />
+                    <div>
+                        {agendamentos.map(agendamento => {
+                            return (
+                                <div key={agendamento.idAgendamento} className="flex items-center justify-between gap-4 py-2 px-2">
+                                    <div className="flex gap-4">
+                                        <p>{agendamento.horario}</p>
+                                        <p>{agendamento.nome}</p>
+                                    </div>
+                                    <button className='pr-3' onClick={() => handleExcluir(agendamento.idAgendamento)}>
+                                        <TrashIcon size={30} color="currentColor" className="text-brand-1" />
+                                    </button>
+                                </div>
+                            );
+                        })}
+                    </div>
+            </div>
     )
+}
 
-    //text.substring(0, 2) parseInt(str, 10) 
+export function ListaAgendamento({agendamentos, excluirAgendamento}: ListaAgendamentosProps){
+    const [dataSelecionada, setDataSelecionada] = useState<string>("Data1")
+
+    const agendamentosPorData = agendamentos.filter(a => a.data === dataSelecionada)
+    const agendamentosManha = agendamentosPorData.filter(a => a.periodo.toLowerCase() === "manhã");
+    const agendamentosTarde = agendamentosPorData.filter(a => a.periodo.toLowerCase() === "tarde");
+    const agendamentosNoite = agendamentosPorData.filter(a => a.periodo.toLowerCase() === "noite");
+
+    return (
+        <div className="bg-base-8 text-base-1 flex flex-col w-full px-64 py-48 h-screen">
+            <div className="flex justify-between items-center gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold">Sua Agenda</h1>
+                    <p className="py-3">Consulte os seus cortes de cabelo agendados por dia</p>
+                </div>
+                <select className='border-base-5 border-2 rounded-lg h-10' name="DatasLista" id="DatasLista" onChange={(event: React.ChangeEvent<HTMLSelectElement>) => setDataSelecionada(event.target.value)}>
+                                <option className="bg-base-5" value="Data1">Data1</option>
+                                <option className="bg-base-5" value="Data2">Data2</option>
+                                <option className="bg-base-5" value="Data3">Data3</option>
+                </select>
+            </div>
+                <div>
+                    {agendamentosPorData.length === 0 ? (
+                        <p className="text-center text-base-4 my-8 font-medium">
+                            Não há cortes de cabelo agendados para este dia.
+                        </p>
+                    ) : (
+                        <>
+                            {agendamentosManha.length > 0 && (
+                                <PeriodoAgendamento agendamentos={agendamentosManha} excluirAgendamento={excluirAgendamento} titulo="Manhã"  />
+                            )}
+                            {agendamentosTarde.length > 0 && (
+                                <PeriodoAgendamento agendamentos={agendamentosTarde} excluirAgendamento={excluirAgendamento} titulo="Tarde" />
+                            )}
+                            {agendamentosNoite.length > 0 && (
+                                <PeriodoAgendamento agendamentos={agendamentosNoite} excluirAgendamento={excluirAgendamento} titulo="Noite" />
+                            )}
+                        </>
+                    )}
+                </div>
+        </div>
+    ) 
 }
