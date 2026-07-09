@@ -41,7 +41,7 @@ function App() {
 
   return <>
       <main className='flex overflow-x-hidden'>
-        <button onClick={() => setSidebarAberto(!sidebarAberto)} className='cursor-pointer md:hidden bg-base-7 text-brand-1 flex pt-2 px-2'>
+        <button onClick={() => setSidebarAberto(!sidebarAberto)} className='cursor-pointer lg:hidden bg-base-7 text-brand-1 flex pt-2 px-2'>
         <ListIcon size={32} color='currentColor' className='text-brand-1'/>
         </button>
         {sidebarAberto && <Overlay aoFechar={fecharSideBar}></Overlay>}
