@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import type { Agendamento } from "../types/Agendamento";
-import { UserRectangleIcon, CalendarBlankIcon  } from "@phosphor-icons/react";
+import { UserRectangleIcon, CalendarBlankIcon, XIcon } from "@phosphor-icons/react";
 
 
 interface SidebarProps {
     aoAdicionarAgendamento: (agendamento: Agendamento) => void;
     agendamentos: Agendamento[]
+    aberto: boolean;
+    aoFechar: () => void;
 }
 
 interface HorariosDoPeriodoProps {
@@ -21,41 +23,43 @@ function HorariosDoPeriodo({horarioSelecionado, titulo, horarios, aoSelecionarHo
         return (
             <div>
                 <p className="py-3">{titulo}</p>
-                {horarios.map(horario => {
-                    const estaSelecionado = horario === horarioSelecionado;
-                    const horarioAgendado = agendamentos.some(a => a.horario === horario && a.data === dataSelecionada)
-                    return (
-                            <>
-                            {!horarioAgendado &&
-                                <button
-                                    key={horario}
-                                    className={estaSelecionado ? "m-2 w-25 h-12 bg-base-6 text-brand-2 border-brand-2 border-2 rounded-xl" : "border-base-5 border-2 m-2 w-25 h-12 rounded-lg cursor-pointer bg-base-6 hover:bg-base-5"}
-                                    onClick={() => aoSelecionarHorario(horario)}
-                                >
-                                    {horario}
-                                </button>
-                            } 
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                        {horarios.map(horario => {
+                            const estaSelecionado = horario === horarioSelecionado;
+                            const horarioAgendado = agendamentos.some(a => a.horario === horario && a.data === dataSelecionada)
+                            return (
+                                    <>
+                                    {!horarioAgendado &&
+                                        <button
+                                            key={horario}
+                                            className={estaSelecionado ? " w-full h-14 md:h-12 bg-base-6 text-brand-2 border-brand-2 border-2 rounded-xl" : "border-base-5 border-2 w-full h-14 md:h-12 rounded-lg cursor-pointer bg-base-6 hover:bg-base-5"}
+                                            onClick={() => aoSelecionarHorario(horario)}
+                                        >
+                                            {horario}
+                                        </button>
+                                    } 
 
-                            {horarioAgendado &&
-                                <button
-                                    key={horario}
-                                    className="border-base-5 border-2 m-2 w-25 h-12 rounded-xl bg-base-8 text-base-5"
-                                    onClick={() => aoSelecionarHorario(horario)}
-                                    disabled
-                                >
-                                    {horario}
-                                </button>
-                            }
-                            </>
-                        );
-                })}
+                                    {horarioAgendado &&
+                                        <button
+                                            key={horario}
+                                            className="border-base-5 border-2 w-full h-14 md:h-12 rounded-xl bg-base-8 text-base-5"
+                                            onClick={() => aoSelecionarHorario(horario)}
+                                            disabled
+                                        >
+                                            {horario}
+                                        </button>
+                                    }
+                                    </>
+                                );
+                        })}
+                </div>    
             </div>
         )
     }
 
 
 
-export function Sidebar({aoAdicionarAgendamento, agendamentos}: SidebarProps){
+export function Sidebar({aoAdicionarAgendamento, agendamentos, aberto, aoFechar}: SidebarProps){
     const[formularioAgendamento, setFormularioAgendamento] = useState<Agendamento>({idAgendamento: 0, nome: '', data: 'Data1', horario: '', periodo: ''})
 
     function handleAgendar(){
@@ -68,8 +72,18 @@ export function Sidebar({aoAdicionarAgendamento, agendamentos}: SidebarProps){
     }
 
     return (
-        <div className="pt-24 px-14 w-150 h-screen bg-base-7 text-base-1 flex flex-col">
+        <div className={`
+                fixed inset-y-0 lefft-0 z-40 w-3/5
+                ${aberto ? "translate-x-0" : "-translate-x-full"}
+                transition-transform duration-300
+                md:static md:translate-x-0 md:w-1/4 md:z-auto
+                px-6 pb-20 pt-6 md:pt-24 md:px-14 h-screen bg-base-7 text-base-1 flex flex-col
+                overflow-y-auto 
+                `}>
             <div>
+                <button className="md:hidden absolute top-4 right-4 cursor-pointer" onClick={() => aoFechar()}>
+                    <XIcon size={32} color="currentColor" className="text-brand-1" />
+                </button>
                 <h1 className="text-3xl font-bold">Agende um atendimento</h1>
                 <p className="pt-3 pb-5">Selecione data, horário e informe o nome do cliente para criar o agendamento</p>
             </div>
@@ -94,14 +108,14 @@ export function Sidebar({aoAdicionarAgendamento, agendamentos}: SidebarProps){
                 </div>
                 {!!formularioAgendamento.nome && !!formularioAgendamento.horario ? (
                     <button 
-                    className="bg-brand-2 text-base-8 font-bold w-full h-16 rounded-lg mt-8 hover:border-brand-1 border-2 cursor-pointer"
+                    className="bg-brand-2 text-base-8 font-bold w-full h-1/11 rounded-lg mt-8 hover:border-brand-1 border-2 cursor-pointer"
                     onClick={handleAgendar}
                     >
                     AGENDAR
                     </button>
                 ) : (
                     <button 
-                    className="bg-brand-3 text-base-8 font-bold w-full h-16 rounded-xl mt-8 border-2"
+                    className="bg-brand-3 text-base-8 font-bold w-full h-1/11 rounded-xl mt-8 border-2"
                     onClick={() => {alert("Insira o nome do Cliente e selecione um Horário")}}
                     >
                     AGENDAR

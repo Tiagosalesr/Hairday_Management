@@ -67,7 +67,7 @@ export function ListaAgendamento({agendamentos, excluirAgendamento}: ListaAgenda
     const agendamentosNoite = agendamentosPorData.filter(a => a.periodo.toLowerCase() === "noite");
 
     return (
-        <div className="bg-base-8 text-base-1 flex flex-col w-full px-64 py-48 h-screen">
+        <div className="bg-base-8 text-base-1 flex flex-col w-full px-21 py-16 md:px-64 md:py-48 h-screen overflow-y-auto ">
             <div className="flex justify-between items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-bold">Sua Agenda</h1>

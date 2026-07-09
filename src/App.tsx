@@ -1,13 +1,19 @@
 import { Sidebar } from './components/Sidebar'
+import { Overlay } from './components/Overlay'
 import './App.css'
 import { useState } from 'react'
 import type { Agendamento } from './types/Agendamento'
 import { ListaAgendamento } from './components/ListaAgendamento'
+import { ListIcon } from "@phosphor-icons/react";
+
+
 
 function App() {
   const[listaAgendamentos, setListaAgendamentos] = useState<Agendamento[]>([])
+  const[sidebarAberto, setSidebarAberto] = useState(true)
+
   console.log(listaAgendamentos)
-  
+
   function aoAdicionarAgendamento(agendamento: Agendamento){
     const novoId = listaAgendamentos.reduce((acumulador, itemAtual)=>  Math.max(acumulador, itemAtual.idAgendamento), 0) + 1;
     let novoPeriodo = ''
@@ -29,10 +35,17 @@ function App() {
     setListaAgendamentos(novaListaAgendamentos)
   }
 
+  function fecharSideBar(){
+    setSidebarAberto(false)
+  }
 
   return <>
-      <main className='flex'>
-        <Sidebar agendamentos={listaAgendamentos} aoAdicionarAgendamento={aoAdicionarAgendamento}></Sidebar>
+      <main className='flex overflow-x-hidden'>
+        <button onClick={() => setSidebarAberto(!sidebarAberto)} className='cursor-pointer md:hidden bg-base-7 text-brand-1 flex pt-2 px-2'>
+        <ListIcon size={32} color='currentColor' className='text-brand-1'/>
+        </button>
+        {sidebarAberto && <Overlay aoFechar={fecharSideBar}></Overlay>}
+        <Sidebar agendamentos={listaAgendamentos} aoAdicionarAgendamento={aoAdicionarAgendamento} aberto={sidebarAberto} aoFechar={fecharSideBar}></Sidebar>
         <ListaAgendamento agendamentos={listaAgendamentos} excluirAgendamento={excluirAgendamento}></ListaAgendamento>
       </main>
   </>
