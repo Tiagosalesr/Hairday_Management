@@ -1,6 +1,6 @@
 import type { Agendamento } from "../types/Agendamento";
 import React, { useState } from "react";
-import { TrashIcon } from "@phosphor-icons/react";
+import { TrashIcon, SunHorizonIcon, CloudSunIcon, MoonStarsIcon  } from "@phosphor-icons/react";
 
 interface ListaAgendamentosProps {
     agendamentos: Agendamento[];
@@ -19,19 +19,23 @@ function PeriodoAgendamento({titulo, agendamentos, excluirAgendamento}: PeriodoA
         excluirAgendamento(idAgendamento)
     }
 
+    let icone
     let intervalo = ""
     if(titulo.toLowerCase() === "manhã"){
         intervalo = "09h-12h"
+         icone = <SunHorizonIcon size={32} color="currentColor" className="text-brand-1"/>
     } else if(titulo.toLowerCase() === "tarde") {
         intervalo = "13h-18h"
+         icone = <CloudSunIcon size={32} color="currentColor" className="text-brand-1"/>
     } else {
         intervalo = "19h-21h"
+         icone = <MoonStarsIcon size={32} color="currentColor" className="text-brand-1"/>
     }
 
     return (
             <div className="border-2 rounded-lg my-5 border-base-5 flex flex-col">
                 <div className="flex justify-between items-center gap-4 px-2 py-2">
-                    <p>{titulo}</p>
+                    <p className="flex gap-3 justify-between items-center">{icone} {titulo}</p>
                     <p>{intervalo}</p>
                 </div>
                 <hr className="border-base-5 my-1" />
@@ -43,8 +47,8 @@ function PeriodoAgendamento({titulo, agendamentos, excluirAgendamento}: PeriodoA
                                         <p>{agendamento.horario}</p>
                                         <p>{agendamento.nome}</p>
                                     </div>
-                                    <button className='pr-3' onClick={() => handleExcluir(agendamento.idAgendamento)}>
-                                        <TrashIcon size={30} color="currentColor" className="text-brand-1" />
+                                    <button className='pr-3 cursor-pointer' onClick={() => handleExcluir(agendamento.idAgendamento)}>
+                                        <TrashIcon size={30} color="currentColor" className="text-brand-1 hover:text-brand-2" />
                                     </button>
                                 </div>
                             );
